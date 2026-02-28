@@ -24,5 +24,8 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Setup Dart for Publishing
+        uses: dart-lang/setup-dart@v1
+
       - name: Publish to pub.dev
-        uses: dart-lang/setup-dart/actions/publish@v1
+        run: flutter pub publish --force
