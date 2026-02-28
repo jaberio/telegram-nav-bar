@@ -1,0 +1,25 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    - public_member_api_docs
+    - sort_constructors_first
+    - always_declare_return_types
+    - annotate_overrides
+    - avoid_empty_else
+    - avoid_print
+    - cancel_subscriptions
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_final_fields
+    - prefer_final_locals
+    - prefer_single_quotes
+    - unnecessary_lambdas
+    - use_key_in_widget_constructors
+
+analyzer:
+  errors:
+    public_member_api_docs: warning
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
