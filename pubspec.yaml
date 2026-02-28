@@ -1,8 +1,5 @@
 name: telegram_nav_bar
-description: >-
-  A highly customizable Flutter package that replicates the latest
-  Telegram-style bottom navigation bar with smooth glassmorphic blur
-  effects, animated indicator bubbles, and seamless dark/light mode support.
+description: A highly customizable Flutter package that accurately replicates the Telegram-style bottom navigation bar with smooth glassmorphic blur effects.
 version: 0.0.1
 repository: https://github.com/jaberio/telegram-nav-bar
 issue_tracker: https://github.com/jaberio/telegram-nav-bar/issues
