@@ -7,8 +7,22 @@ on:
 
 jobs:
   publish:
+    runs-on: ubuntu-latest
     permissions:
-      id-token: write
-    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
-    with:
-      setup-flutter: true
+      id-token: write # Required for authentication using OIDC
+      contents: read  # Required for checkout
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Publish to pub.dev
+        uses: dart-lang/setup-dart/actions/publish@v1
