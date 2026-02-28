@@ -17,6 +17,7 @@
 ///   ],
 /// )
 /// ```
+library;
 
 // Domain
 export 'telegram_nav_bar/domain/models/telegram_nav_item.dart';
