@@ -7,6 +7,10 @@ A production-ready, highly-customizable Flutter package that replicates the late
 
 Built with **Clean Architecture**, **100% Null Safety**, and **zero external dependencies** — only pure Flutter / `dart:ui`.
 
+<p align="center">
+  <img src="doc/demo.gif" width="250" alt="Telegram Nav Bar Demo">
+</p>
+
 ## Features ✨
 
 - **Telegram-accurate design** — Full-width translucent glass bar with a thin top divider, matching Telegram's latest Liquid Glass aesthetic
