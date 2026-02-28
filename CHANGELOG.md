@@ -1,3 +1,10 @@
+## 0.0.2
+
+* **Fix**: Shortened package description to meet pub.dev constraints.
+* **Fix**: Repaired `demo.gif` relative path in README for pub.dev compatibility.
+* **Fix**: Resolved dangling library doc comment warning.
+* **Chore**: Set up automated pub.dev publishing via GitHub Actions.
+
 ## 0.0.1
 
 * **Initial release** of the Telegram-style bottom navigation bar.
