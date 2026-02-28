@@ -4,8 +4,8 @@ description: >-
   Telegram-style bottom navigation bar with smooth glassmorphic blur
   effects, animated indicator bubbles, and seamless dark/light mode support.
 version: 0.0.1
-repository: https://github.com/example/telegram_nav_bar
-issue_tracker: https://github.com/example/telegram_nav_bar/issues
+repository: https://github.com/jaberio/telegram-nav-bar
+issue_tracker: https://github.com/jaberio/telegram-nav-bar/issues
 
 topics:
   - navigation
