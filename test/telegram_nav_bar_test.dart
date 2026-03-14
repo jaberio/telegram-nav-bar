@@ -21,6 +21,8 @@ void main() {
     Duration? animationDuration,
     bool showTopDivider = true,
     Brightness brightness = Brightness.light,
+    Widget? centerButton,
+    double centerButtonOffset = 0,
   }) {
     return MaterialApp(
       theme: ThemeData(brightness: brightness),
@@ -33,14 +35,12 @@ void main() {
           inactiveColor: inactiveColor,
           animationDuration: animationDuration,
           showTopDivider: showTopDivider,
+          centerButton: centerButton,
+          centerButtonOffset: centerButtonOffset,
         ),
       ),
     );
   }
-
-  // ---------------------------------------------------------------------------
-  // Rendering
-  // ---------------------------------------------------------------------------
 
   group('Rendering', () {
     testWidgets('renders all navigation item labels', (tester) async {
@@ -56,27 +56,23 @@ void main() {
 
       expect(find.byIcon(Icons.home), findsOneWidget);
       expect(find.byIcon(Icons.search), findsOneWidget);
-      // Profile is not selected → should show outline icon
       expect(find.byIcon(Icons.person_outline), findsOneWidget);
     });
 
     testWidgets('renders activeIcon when item is selected', (tester) async {
-      // currentIndex = 2 → Profile should show filled icon
       await tester.pumpWidget(buildTestWidget(currentIndex: 2, onTap: (_) {}));
 
       expect(find.byIcon(Icons.person), findsOneWidget);
-      // The outline variant should not be displayed
       expect(find.byIcon(Icons.person_outline), findsNothing);
     });
 
     testWidgets('renders top divider by default', (tester) async {
       await tester.pumpWidget(buildTestWidget(currentIndex: 0, onTap: (_) {}));
 
-      // Find the divider container by its exact height
       final dividerFinder = find.byWidgetPredicate(
         (widget) =>
             widget is Container &&
-            widget.constraints?.maxHeight == NavBarConstants.topDividerHeight,
+            widget.constraints?.maxHeight == NavBarDefaults.topDividerHeight,
       );
       expect(dividerFinder, findsOneWidget);
     });
@@ -92,15 +88,11 @@ void main() {
       final dividerFinder = find.byWidgetPredicate(
         (widget) =>
             widget is Container &&
-            widget.constraints?.maxHeight == NavBarConstants.topDividerHeight,
+            widget.constraints?.maxHeight == NavBarDefaults.topDividerHeight,
       );
       expect(dividerFinder, findsNothing);
     });
   });
-
-  // ---------------------------------------------------------------------------
-  // Interaction
-  // ---------------------------------------------------------------------------
 
   group('Interaction', () {
     testWidgets('tapping an item calls onTap with the correct index',
@@ -122,10 +114,6 @@ void main() {
     });
   });
 
-  // ---------------------------------------------------------------------------
-  // Selection state
-  // ---------------------------------------------------------------------------
-
   group('Selection state', () {
     testWidgets('NavItemWidget receives correct isSelected value',
         (tester) async {
@@ -139,10 +127,6 @@ void main() {
       expect(widgets[2].isSelected, false);
     });
   });
-
-  // ---------------------------------------------------------------------------
-  // Customisation
-  // ---------------------------------------------------------------------------
 
   group('Customisation', () {
     testWidgets('applies custom active and inactive colors', (tester) async {
@@ -184,15 +168,72 @@ void main() {
         brightness: Brightness.dark,
       ));
 
-      // Should still render all items without error
       expect(find.text('Home'), findsOneWidget);
       expect(find.byType(GlassContainer), findsOneWidget);
     });
   });
 
-  // ---------------------------------------------------------------------------
-  // Model
-  // ---------------------------------------------------------------------------
+  group('Center button', () {
+    testWidgets('renders center button when provided', (tester) async {
+      await tester.pumpWidget(buildTestWidget(
+        currentIndex: 0,
+        onTap: (_) {},
+        centerButton: const Icon(Icons.add, key: Key('fab')),
+        centerButtonOffset: 20,
+      ));
+
+      expect(find.byKey(const Key('fab')), findsOneWidget);
+      expect(find.text('Home'), findsOneWidget);
+      expect(find.text('Profile'), findsOneWidget);
+    });
+  });
+
+  group('Badges', () {
+    testWidgets('renders badge count on item', (tester) async {
+      const badgeItems = <TelegramNavItem>[
+        TelegramNavItem(icon: Icons.home, label: 'Home', badgeCount: 5),
+        TelegramNavItem(icon: Icons.search, label: 'Search'),
+      ];
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          bottomNavigationBar: TelegramNavBar(
+            items: badgeItems,
+            currentIndex: 0,
+            onTap: (_) {},
+          ),
+        ),
+      ));
+
+      expect(find.text('5'), findsOneWidget);
+    });
+
+    testWidgets('renders badge dot when showBadge is true', (tester) async {
+      const badgeItems = <TelegramNavItem>[
+        TelegramNavItem(icon: Icons.home, label: 'Home', showBadge: true),
+        TelegramNavItem(icon: Icons.search, label: 'Search'),
+      ];
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          bottomNavigationBar: TelegramNavBar(
+            items: badgeItems,
+            currentIndex: 0,
+            onTap: (_) {},
+          ),
+        ),
+      ));
+
+      // Badge dot should appear (8x8 container)
+      final badgeFinder = find.byWidgetPredicate(
+        (widget) =>
+            widget is Container &&
+            widget.constraints != null &&
+            widget.constraints!.maxWidth == 8,
+      );
+      expect(badgeFinder, findsOneWidget);
+    });
+  });
 
   group('TelegramNavItem', () {
     test('equality works correctly', () {
@@ -209,6 +250,23 @@ void main() {
       const item = TelegramNavItem(icon: Icons.home, label: 'Home');
       expect(item.toString(), contains('TelegramNavItem'));
       expect(item.toString(), contains('Home'));
+    });
+
+    test('hasBadge returns true for badgeCount > 0', () {
+      const item =
+          TelegramNavItem(icon: Icons.home, label: 'Home', badgeCount: 3);
+      expect(item.hasBadge, isTrue);
+    });
+
+    test('hasBadge returns true for showBadge', () {
+      const item =
+          TelegramNavItem(icon: Icons.home, label: 'Home', showBadge: true);
+      expect(item.hasBadge, isTrue);
+    });
+
+    test('hasBadge returns false by default', () {
+      const item = TelegramNavItem(icon: Icons.home, label: 'Home');
+      expect(item.hasBadge, isFalse);
     });
   });
 }

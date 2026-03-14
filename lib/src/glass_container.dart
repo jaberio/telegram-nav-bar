@@ -2,12 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 
-/// A widget that applies a glassmorphic (frosted-glass) blur effect to
-/// its background content.
-///
-/// This is the core visual building block for Telegram's "Liquid Glass"
-/// design language. It uses [BackdropFilter] with a Gaussian blur and
-/// overlays a semi-transparent [backgroundColor].
+/// Glassmorphic (frosted-glass) blur background container.
 class GlassContainer extends StatelessWidget {
   /// Creates a [GlassContainer].
   const GlassContainer({
@@ -19,23 +14,19 @@ class GlassContainer extends StatelessWidget {
     this.border,
   });
 
-  /// The widget below this widget in the tree.
+  /// The child widget.
   final Widget child;
 
-  /// The Gaussian blur sigma applied to the backdrop.
+  /// Gaussian blur sigma.
   final double blurStrength;
 
-  /// The semi-transparent color overlaid on the blurred content.
+  /// Semi-transparent overlay color.
   final Color backgroundColor;
 
-  /// Optional border radius to clip the glass effect.
-  ///
-  /// When provided the [BackdropFilter] will be clipped to rounded
-  /// corners, preventing the blur from bleeding beyond the bar shape.
+  /// Optional corner radius.
   final BorderRadius? borderRadius;
 
-  /// Optional border to draw around the container for a subtle glass
-  /// edge highlight.
+  /// Optional border decoration.
   final Border? border;
 
   @override
