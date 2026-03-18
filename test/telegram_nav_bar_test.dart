@@ -23,6 +23,7 @@ void main() {
     Brightness brightness = Brightness.light,
     Widget? centerButton,
     double centerButtonOffset = 0,
+    LiquidGlassStyle? liquidGlassStyle,
   }) {
     return MaterialApp(
       theme: ThemeData(brightness: brightness),
@@ -37,6 +38,7 @@ void main() {
           showTopDivider: showTopDivider,
           centerButton: centerButton,
           centerButtonOffset: centerButtonOffset,
+          liquidGlassStyle: liquidGlassStyle,
         ),
       ),
     );
@@ -267,6 +269,132 @@ void main() {
     test('hasBadge returns false by default', () {
       const item = TelegramNavItem(icon: Icons.home, label: 'Home');
       expect(item.hasBadge, isFalse);
+    });
+  });
+
+  group('Liquid Glass', () {
+    testWidgets('renders with LiquidGlassStyle.standard()', (tester) async {
+      await tester.pumpWidget(buildTestWidget(
+        currentIndex: 0,
+        onTap: (_) {},
+        liquidGlassStyle: LiquidGlassStyle.standard(),
+      ));
+
+      expect(find.text('Home'), findsOneWidget);
+      expect(find.text('Search'), findsOneWidget);
+      expect(find.text('Profile'), findsOneWidget);
+      expect(find.byType(GlassContainer), findsOneWidget);
+    });
+
+    testWidgets('hides top divider in liquid glass mode', (tester) async {
+      await tester.pumpWidget(buildTestWidget(
+        currentIndex: 0,
+        onTap: (_) {},
+        liquidGlassStyle: LiquidGlassStyle.standard(),
+      ));
+
+      final dividerFinder = find.byWidgetPredicate(
+        (widget) =>
+            widget is Container &&
+            widget.constraints?.maxHeight == NavBarDefaults.topDividerHeight,
+      );
+      expect(dividerFinder, findsNothing);
+    });
+
+    testWidgets('passes liquidGlass flag to NavItemWidget', (tester) async {
+      await tester.pumpWidget(buildTestWidget(
+        currentIndex: 0,
+        onTap: (_) {},
+        liquidGlassStyle: LiquidGlassStyle.standard(),
+      ));
+
+      final widgets =
+          tester.widgetList<NavItemWidget>(find.byType(NavItemWidget)).toList();
+
+      expect(widgets[0].liquidGlass, isTrue);
+      expect(widgets[1].liquidGlass, isTrue);
+    });
+
+    testWidgets('tapping works in liquid glass mode', (tester) async {
+      int tappedIndex = -1;
+
+      await tester.pumpWidget(buildTestWidget(
+        currentIndex: 0,
+        onTap: (index) => tappedIndex = index,
+        liquidGlassStyle: LiquidGlassStyle.standard(),
+      ));
+
+      await tester.tap(find.text('Search'));
+      await tester.pumpAndSettle();
+      expect(tappedIndex, 1);
+    });
+
+    testWidgets('renders in dark mode with liquid glass', (tester) async {
+      await tester.pumpWidget(buildTestWidget(
+        currentIndex: 0,
+        onTap: (_) {},
+        brightness: Brightness.dark,
+        liquidGlassStyle: LiquidGlassStyle.standard(),
+      ));
+
+      expect(find.text('Home'), findsOneWidget);
+      expect(find.byType(GlassContainer), findsOneWidget);
+    });
+
+    testWidgets('applies custom tint in liquid glass', (tester) async {
+      await tester.pumpWidget(buildTestWidget(
+        currentIndex: 1,
+        onTap: (_) {},
+        liquidGlassStyle: const LiquidGlassStyle(
+          tintColor: Colors.purple,
+          tintOpacity: 0.1,
+          borderColor: Colors.purpleAccent,
+        ),
+      ));
+
+      expect(find.text('Home'), findsOneWidget);
+      expect(find.text('Search'), findsOneWidget);
+
+      final widgets =
+          tester.widgetList<NavItemWidget>(find.byType(NavItemWidget)).toList();
+      expect(widgets[0].isSelected, false);
+      expect(widgets[1].isSelected, true);
+    });
+
+    testWidgets('center button works with liquid glass', (tester) async {
+      await tester.pumpWidget(buildTestWidget(
+        currentIndex: 0,
+        onTap: (_) {},
+        liquidGlassStyle: LiquidGlassStyle.standard(),
+        centerButton: const Icon(Icons.add, key: Key('lg_fab')),
+        centerButtonOffset: 20,
+      ));
+
+      expect(find.byKey(const Key('lg_fab')), findsOneWidget);
+      expect(find.text('Home'), findsOneWidget);
+    });
+  });
+
+  group('LiquidGlassStyle', () {
+    test('standard() creates instance with null overrides', () {
+      final style = LiquidGlassStyle.standard();
+      expect(style.blurStrength, isNull);
+      expect(style.backgroundColor, isNull);
+      expect(style.borderColor, isNull);
+      expect(style.tintColor, isNull);
+    });
+
+    test('custom values are preserved', () {
+      const style = LiquidGlassStyle(
+        blurStrength: 40,
+        tintColor: Colors.blue,
+        tintOpacity: 0.2,
+        borderWidth: 2.0,
+      );
+      expect(style.blurStrength, 40);
+      expect(style.tintColor, Colors.blue);
+      expect(style.tintOpacity, 0.2);
+      expect(style.borderWidth, 2.0);
     });
   });
 }

@@ -28,7 +28,7 @@ A production-ready Flutter package that replicates the **Telegram "Liquid Glass"
 
 ```yaml
 dependencies:
-  telegram_nav_bar: ^0.1.0
+  telegram_nav_bar: ^0.2.0
 ```
 
 ```bash

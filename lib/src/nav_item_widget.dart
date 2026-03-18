@@ -17,6 +17,8 @@ class NavItemWidget extends StatefulWidget {
     required this.bubbleColor,
     this.iconSize,
     this.enableHapticFeedback = true,
+    this.liquidGlass = false,
+    this.bubbleBorderColor,
   });
 
   /// The navigation item data.
@@ -46,6 +48,12 @@ class NavItemWidget extends StatefulWidget {
   /// Whether to trigger haptic feedback.
   final bool enableHapticFeedback;
 
+  /// Whether the item uses Liquid Glass styling.
+  final bool liquidGlass;
+
+  /// Border color for the Liquid Glass bubble.
+  final Color? bubbleBorderColor;
+
   @override
   State<NavItemWidget> createState() => _NavItemWidgetState();
 }
@@ -71,6 +79,11 @@ class _NavItemWidgetState extends State<NavItemWidget> {
         ? (widget.item.activeIcon ?? widget.item.icon)
         : widget.item.icon;
 
+    final pressCurve =
+        widget.liquidGlass ? Curves.easeOutCubic : Curves.easeOutCubic;
+    final selectionCurve =
+        widget.liquidGlass ? Curves.easeOutCubic : Curves.easeOutBack;
+
     return GestureDetector(
       onTapDown: _onTapDown,
       onTapUp: _onTapUp,
@@ -79,7 +92,7 @@ class _NavItemWidgetState extends State<NavItemWidget> {
       child: AnimatedScale(
         scale: _pressed ? NavBarDefaults.pressedScale : 1.0,
         duration: const Duration(milliseconds: 100),
-        curve: Curves.easeOutCubic,
+        curve: pressCurve,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -92,12 +105,15 @@ class _NavItemWidgetState extends State<NavItemWidget> {
                   isSelected: widget.isSelected,
                   animationDuration: widget.animationDuration,
                   color: widget.bubbleColor,
+                  liquidGlass: widget.liquidGlass,
+                  borderColor: widget.bubbleBorderColor,
                 ),
                 AnimatedScale(
-                  scale:
-                      widget.isSelected ? NavBarDefaults.activeIconScale : 1.0,
+                  scale: widget.isSelected
+                      ? NavBarDefaults.activeIconScale
+                      : 1.0,
                   duration: widget.animationDuration,
-                  curve: Curves.easeOutBack,
+                  curve: selectionCurve,
                   child: TweenAnimationBuilder<Color?>(
                     tween: ColorTween(
                       begin: widget.inactiveColor,

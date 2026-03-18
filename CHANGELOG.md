@@ -1,3 +1,12 @@
+## 0.2.0
+
+* **Feature**: Liquid Glass mode — translucent floating capsule style inspired by Telegram's Liquid Glass UI.
+* **Feature**: `LiquidGlassStyle` configuration class with full customization: blur, tint, border glow, highlight gradient, shadow, and margin.
+* **Feature**: `GlassContainer` now supports inner highlight gradient, tint color blending, and configurable drop shadow.
+* **Feature**: `AnimatedBubble` supports gradient fill, border glow, and opacity fade in Liquid Glass mode.
+* **Example**: Added 3 new demos — Liquid Glass, Liquid Glass Tinted, and Liquid Glass + FAB.
+* **Tests**: Added 9 new tests covering Liquid Glass rendering, interaction, dark mode, tinting, and style properties.
+
 ## 0.1.0
 
 * **Breaking**: Simplified folder structure — replaced deep `core/domain/presentation` layers with flat `lib/src/`.

@@ -13,7 +13,7 @@ class ExampleApp extends StatelessWidget {
     return MaterialApp(
       title: 'Telegram Nav Bar Example',
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
       theme: ThemeData(
         brightness: Brightness.light,
         scaffoldBackgroundColor: const Color(0xFFF0F0F0),
@@ -42,7 +42,15 @@ class DemoSelector extends StatefulWidget {
 class _DemoSelectorState extends State<DemoSelector> {
   final int _selected = 0;
 
-  static const _demos = ['Default', 'Floating', 'Center FAB', 'Badges'];
+  static const _demos = [
+    'Default',
+    'Floating',
+    'Center FAB',
+    'Badges',
+    'Liquid Glass',
+    'Liquid Glass Tinted',
+    'Liquid Glass + FAB',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +65,8 @@ class _DemoSelectorState extends State<DemoSelector> {
           return FilledButton.tonal(
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 20),
-              backgroundColor: isSelected
-                  ? NavBarDefaults.telegramBlue.withAlpha(40)
-                  : null,
+              backgroundColor:
+                  isSelected ? NavBarDefaults.telegramBlue.withAlpha(40) : null,
             ),
             onPressed: () {
               Navigator.of(context).push(
@@ -81,6 +88,9 @@ class _DemoSelectorState extends State<DemoSelector> {
         1 => const FloatingDemo(),
         2 => const CenterFabDemo(),
         3 => const BadgesDemo(),
+        4 => const LiquidGlassDemo(),
+        5 => const LiquidGlassTintedDemo(),
+        6 => const LiquidGlassFabDemo(),
         _ => const DefaultDemo(),
       };
 }
@@ -109,9 +119,7 @@ class _DefaultDemoState extends State<DefaultDemo> {
         activeIcon: Icons.person,
         label: 'Contacts'),
     TelegramNavItem(
-        icon: Icons.call_outlined,
-        activeIcon: Icons.call,
-        label: 'Calls'),
+        icon: Icons.call_outlined, activeIcon: Icons.call, label: 'Calls'),
     TelegramNavItem(
         icon: Icons.settings_outlined,
         activeIcon: Icons.settings,
@@ -147,16 +155,15 @@ class _FloatingDemoState extends State<FloatingDemo> {
   int _index = 0;
 
   static const _items = [
-    TelegramNavItem(icon: Icons.home_outlined, activeIcon: Icons.home, label: 'Home'),
+    TelegramNavItem(
+        icon: Icons.home_outlined, activeIcon: Icons.home, label: 'Home'),
     TelegramNavItem(icon: Icons.search, label: 'Search'),
     TelegramNavItem(
         icon: Icons.favorite_outline,
         activeIcon: Icons.favorite,
         label: 'Favorites'),
     TelegramNavItem(
-        icon: Icons.person_outline,
-        activeIcon: Icons.person,
-        label: 'Profile'),
+        icon: Icons.person_outline, activeIcon: Icons.person, label: 'Profile'),
   ];
 
   @override
@@ -196,12 +203,9 @@ class _CenterFabDemoState extends State<CenterFabDemo> {
         icon: Icons.chat_bubble_outline,
         activeIcon: Icons.chat_bubble,
         label: 'Chats'),
+    TelegramNavItem(icon: Icons.search, label: 'Search'),
     TelegramNavItem(
-        icon: Icons.search, label: 'Search'),
-    TelegramNavItem(
-        icon: Icons.call_outlined,
-        activeIcon: Icons.call,
-        label: 'Calls'),
+        icon: Icons.call_outlined, activeIcon: Icons.call, label: 'Calls'),
     TelegramNavItem(
         icon: Icons.settings_outlined,
         activeIcon: Icons.settings,
@@ -300,6 +304,198 @@ class _BadgesDemoState extends State<BadgesDemo> {
         currentIndex: _index,
         onTap: (i) => setState(() => _index = i),
         items: _items,
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Demo 5: Liquid Glass (standard)
+// ---------------------------------------------------------------------------
+
+class LiquidGlassDemo extends StatefulWidget {
+  const LiquidGlassDemo({super.key});
+
+  @override
+  State<LiquidGlassDemo> createState() => _LiquidGlassDemoState();
+}
+
+class _LiquidGlassDemoState extends State<LiquidGlassDemo> {
+  int _index = 0;
+
+  static const _items = [
+    TelegramNavItem(
+      icon: Icons.chat_bubble_outline,
+      activeIcon: Icons.chat_bubble,
+      label: 'Chats',
+      badgeCount: 5,
+    ),
+    TelegramNavItem(
+      icon: Icons.person_outline,
+      activeIcon: Icons.person,
+      label: 'Contacts',
+    ),
+    TelegramNavItem(
+      icon: Icons.call_outlined,
+      activeIcon: Icons.call,
+      label: 'Calls',
+    ),
+    TelegramNavItem(
+      icon: Icons.settings_outlined,
+      activeIcon: Icons.settings,
+      label: 'Settings',
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Liquid Glass')),
+      body: _PageContent(label: _items[_index].label),
+      bottomNavigationBar: TelegramNavBar(
+        currentIndex: _index,
+        onTap: (i) => setState(() => _index = i),
+        items: _items,
+        liquidGlassStyle: LiquidGlassStyle.standard(),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Demo 6: Liquid Glass with custom tint
+// ---------------------------------------------------------------------------
+
+class LiquidGlassTintedDemo extends StatefulWidget {
+  const LiquidGlassTintedDemo({super.key});
+
+  @override
+  State<LiquidGlassTintedDemo> createState() => _LiquidGlassTintedDemoState();
+}
+
+class _LiquidGlassTintedDemoState extends State<LiquidGlassTintedDemo> {
+  int _index = 0;
+
+  static const _items = [
+    TelegramNavItem(
+      icon: Icons.home_outlined,
+      activeIcon: Icons.home,
+      label: 'Home',
+    ),
+    TelegramNavItem(
+      icon: Icons.explore_outlined,
+      activeIcon: Icons.explore,
+      label: 'Explore',
+    ),
+    TelegramNavItem(
+      icon: Icons.bookmark_outline,
+      activeIcon: Icons.bookmark,
+      label: 'Saved',
+      showBadge: true,
+    ),
+    TelegramNavItem(
+      icon: Icons.person_outline,
+      activeIcon: Icons.person,
+      label: 'Profile',
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Liquid Glass Tinted')),
+      body: _PageContent(label: _items[_index].label),
+      bottomNavigationBar: TelegramNavBar(
+        currentIndex: _index,
+        onTap: (i) => setState(() => _index = i),
+        items: _items,
+        liquidGlassStyle: const LiquidGlassStyle(
+          tintColor: Color(0xFF2AABEE),
+          tintOpacity: 0.08,
+          borderColor: Color(0x442AABEE),
+          shadowBlurRadius: 24,
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Demo 7: Liquid Glass + Center FAB
+// ---------------------------------------------------------------------------
+
+class LiquidGlassFabDemo extends StatefulWidget {
+  const LiquidGlassFabDemo({super.key});
+
+  @override
+  State<LiquidGlassFabDemo> createState() => _LiquidGlassFabDemoState();
+}
+
+class _LiquidGlassFabDemoState extends State<LiquidGlassFabDemo> {
+  int _index = 0;
+
+  static const _items = [
+    TelegramNavItem(
+      icon: Icons.chat_bubble_outline,
+      activeIcon: Icons.chat_bubble,
+      label: 'Chats',
+      badgeCount: 8,
+    ),
+    TelegramNavItem(
+      icon: Icons.search,
+      label: 'Search',
+    ),
+    TelegramNavItem(
+      icon: Icons.call_outlined,
+      activeIcon: Icons.call,
+      label: 'Calls',
+    ),
+    TelegramNavItem(
+      icon: Icons.settings_outlined,
+      activeIcon: Icons.settings,
+      label: 'Settings',
+    ),
+  ];
+
+  void _onFabTap() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('FAB tapped!'),
+        duration: Duration(seconds: 1),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Liquid Glass + FAB')),
+      body: _PageContent(label: _items[_index].label),
+      bottomNavigationBar: TelegramNavBar(
+        currentIndex: _index,
+        onTap: (i) => setState(() => _index = i),
+        items: _items,
+        liquidGlassStyle: LiquidGlassStyle.standard(),
+        centerButton: GestureDetector(
+          onTap: _onFabTap,
+          child: Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: NavBarDefaults.telegramBlue,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: NavBarDefaults.telegramBlue.withAlpha(100),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Icon(Icons.edit, color: Colors.white, size: 24),
+          ),
+        ),
+        centerButtonOffset: 22,
       ),
     );
   }

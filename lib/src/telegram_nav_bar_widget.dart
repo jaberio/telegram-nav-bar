@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../telegram_nav_bar.dart';
 
 /// Telegram-style bottom navigation bar with glassmorphic blur, animated
-/// indicators, optional center button (FAB), and badge support.
+/// indicators, optional center button (FAB), badge support, and Liquid Glass
+/// mode.
 class TelegramNavBar extends StatelessWidget {
   /// Creates a [TelegramNavBar].
   const TelegramNavBar({
@@ -28,6 +29,7 @@ class TelegramNavBar extends StatelessWidget {
     this.centerButton,
     this.centerButtonOffset = 0,
     this.enableHapticFeedback = true,
+    this.liquidGlassStyle,
   })  : assert(items.length >= 2, 'TelegramNavBar requires at least 2 items'),
         assert(
           currentIndex >= 0 && currentIndex < items.length,
@@ -95,29 +97,98 @@ class TelegramNavBar extends StatelessWidget {
   /// Whether items trigger haptic feedback on tap.
   final bool enableHapticFeedback;
 
+  /// When non-null, enables the Liquid Glass floating capsule style.
+  ///
+  /// Any property set on [LiquidGlassStyle] takes priority over the
+  /// corresponding top-level property (e.g. `blurStrength`).
+  final LiquidGlassStyle? liquidGlassStyle;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final isLiquid = liquidGlassStyle != null;
+    final lg = liquidGlassStyle;
 
-    final bgColor = backgroundColor ??
-        (isDark
-            ? NavBarDefaults.darkBackground
-            : NavBarDefaults.lightBackground);
+    // ── Resolve values (Liquid Glass overrides > explicit props > defaults) ──
+
+    final bgColor = lg?.backgroundColor ??
+        backgroundColor ??
+        (isLiquid
+            ? (isDark
+                ? NavBarDefaults.liquidGlassDarkBg
+                : NavBarDefaults.liquidGlassLightBg)
+            : (isDark
+                ? NavBarDefaults.darkBackground
+                : NavBarDefaults.lightBackground));
+
     final activeClr = activeColor ?? NavBarDefaults.telegramBlue;
     final inactiveClr = inactiveColor ?? NavBarDefaults.inactiveGrey;
-    final blur = blurStrength ?? NavBarDefaults.blurStrength;
-    final duration = animationDuration ?? NavBarDefaults.animationDuration;
-    final barHeight = height ?? NavBarDefaults.barHeight;
+
+    final blur = lg?.blurStrength ??
+        blurStrength ??
+        (isLiquid ? NavBarDefaults.liquidGlassBlur : NavBarDefaults.blurStrength);
+
+    final duration = animationDuration ??
+        (isLiquid
+            ? NavBarDefaults.liquidGlassAnimationDuration
+            : NavBarDefaults.animationDuration);
+
+    final barHeight = height ??
+        (isLiquid
+            ? NavBarDefaults.liquidGlassBarHeight
+            : NavBarDefaults.barHeight);
+
     final bubbleClr = bubbleColor ??
-        (isDark
-            ? NavBarDefaults.activeBubbleDark
-            : NavBarDefaults.activeBubbleLight);
+        (isLiquid
+            ? (isDark
+                ? NavBarDefaults.liquidGlassBubbleDark
+                : NavBarDefaults.liquidGlassBubbleLight)
+            : (isDark
+                ? NavBarDefaults.activeBubbleDark
+                : NavBarDefaults.activeBubbleLight));
+
     final dividerClr = topDividerColor ??
         (isDark
             ? NavBarDefaults.topDividerDark
             : NavBarDefaults.topDividerLight);
+
     final shadowAlpha = elevation ?? (isDark ? 0.3 : 0.08);
+
+    final effectiveBorderRadius = lg?.borderRadius ??
+        borderRadius ??
+        (isLiquid
+            ? BorderRadius.circular(NavBarDefaults.liquidGlassBorderRadius)
+            : null);
+
+    final effectiveMargin = lg?.margin ??
+        margin ??
+        (isLiquid
+            ? const EdgeInsets.fromLTRB(
+                NavBarDefaults.liquidGlassHorizontalMargin,
+                0,
+                NavBarDefaults.liquidGlassHorizontalMargin,
+                NavBarDefaults.liquidGlassBottomMargin,
+              )
+            : null);
+
+    // Liquid Glass specific
+    final borderClr = lg?.borderColor ??
+        (isDark
+            ? NavBarDefaults.liquidGlassBorderDark
+            : NavBarDefaults.liquidGlassBorderLight);
+    final borderWidth =
+        lg?.borderWidth ?? NavBarDefaults.liquidGlassBorderWidth;
+    final highlightClr = lg?.highlightColor ??
+        (isDark
+            ? NavBarDefaults.liquidGlassHighlightDark
+            : NavBarDefaults.liquidGlassHighlightLight);
+    final shadowClr = lg?.shadowColor ??
+        (isDark
+            ? NavBarDefaults.liquidGlassShadowDark
+            : NavBarDefaults.liquidGlassShadowLight);
+
+    // ── Build items ──
 
     final hasCenterBtn = centerButton != null;
     final midIndex = hasCenterBtn ? items.length ~/ 2 : -1;
@@ -134,6 +205,8 @@ class TelegramNavBar extends StatelessWidget {
           bubbleColor: bubbleClr,
           iconSize: iconSize,
           enableHapticFeedback: enableHapticFeedback,
+          liquidGlass: isLiquid,
+          bubbleBorderColor: isLiquid ? borderClr : null,
         ),
       );
     }
@@ -153,26 +226,39 @@ class TelegramNavBar extends StatelessWidget {
       }
     }
 
+    // ── Compose bar ──
+
     Widget barContent = GlassContainer(
       backgroundColor: bgColor,
       blurStrength: blur,
-      borderRadius: borderRadius,
+      borderRadius: effectiveBorderRadius,
+      border: isLiquid
+          ? Border.all(color: borderClr, width: borderWidth)
+          : null,
+      highlightColor: isLiquid ? highlightClr : null,
+      tintColor: lg?.tintColor,
+      tintOpacity: lg?.tintOpacity ?? 0.0,
+      shadowColor: isLiquid ? shadowClr : null,
+      shadowBlurRadius: lg?.shadowBlurRadius,
+      shadowOffset: lg?.shadowOffset,
       child: Container(
         height: barHeight,
-        decoration: BoxDecoration(
-          borderRadius: borderRadius,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: shadowAlpha),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
+        decoration: !isLiquid
+            ? BoxDecoration(
+                borderRadius: effectiveBorderRadius,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: shadowAlpha),
+                    blurRadius: 10,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              )
+            : null,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (showTopDivider)
+            if (showTopDivider && !isLiquid)
               Container(
                 height: NavBarDefaults.topDividerHeight,
                 color: dividerClr,
@@ -205,7 +291,7 @@ class TelegramNavBar extends StatelessWidget {
     }
 
     return Padding(
-      padding: margin ?? EdgeInsets.zero,
+      padding: effectiveMargin ?? EdgeInsets.zero,
       child: SafeArea(
         top: false,
         child: Padding(
