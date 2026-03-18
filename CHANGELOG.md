@@ -1,3 +1,7 @@
+## 0.2.1
+
+* **Docs**: Updated README demo GIFs layout.
+
 ## 0.2.0
 
 * **Feature**: Liquid Glass mode — translucent floating capsule style inspired by Telegram's Liquid Glass UI.
