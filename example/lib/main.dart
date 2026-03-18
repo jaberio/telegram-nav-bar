@@ -13,7 +13,7 @@ class ExampleApp extends StatelessWidget {
     return MaterialApp(
       title: 'Telegram Nav Bar Example',
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.system,
       theme: ThemeData(
         brightness: Brightness.light,
         scaffoldBackgroundColor: const Color(0xFFF0F0F0),

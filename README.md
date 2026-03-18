@@ -7,9 +7,11 @@ A production-ready Flutter package that replicates the **Telegram "Liquid Glass"
 
 **Zero external dependencies** — pure Flutter / `dart:ui`.
 
-<p align="center">
-  <img src="doc/demo.gif" width="250" alt="Telegram Nav Bar Demo">
-</p>
+<table align="center"><tr>
+<td><img src="doc/demo.gif" width="230" alt="Telegram Nav Bar Demo"></td>
+<td><img src="doc/demo1.gif" width="230" alt="Telegram Nav Bar Liquid Glass Demo"></td>
+</tr></table>
+
 
 ## Features
 
